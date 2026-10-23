@@ -1,0 +1,15 @@
+{
+  "name": "xinliqiu-store",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "migrate": "wrangler d1 execute xinliqiu-index --file=./migrations/0001_init.sql --remote",
+    "migrate:local": "wrangler d1 execute xinliqiu-index --file=./migrations/0001_init.sql --local"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

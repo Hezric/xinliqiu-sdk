@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+dist/
+build/
+
+# Node
+ts/node_modules/
+ts/dist/
+cloudflare/node_modules/
+
+# Local runtime data
+xinliqiu-store/
+*.part
+
+# Secrets: never commit credentials
+*.pem
+*.key
+ksc*.json
+peer-id*.txt
+.env
