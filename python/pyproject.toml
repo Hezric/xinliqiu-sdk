@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "xinliqiu-sdk"
+version = "0.1.0"
+description = "\u5fc3\u529b\u7403 SDK - talk to an OPPO AI \u5fc3\u529b\u7403 from Python: recording, encrypted retrieval, decryption."
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["oppo", "xinliqiu", "aipin", "ble", "voice", "recorder"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: MacOS :: MacOS X",
+  "Operating System :: POSIX :: Linux",
+  "Topic :: Multimedia :: Sound/Audio",
+]
+readme = "README.md"
+
+[project.optional-dependencies]
+crypto = ["cryptography>=42"]
+ble = ["bleak>=0.22"]
+all = ["cryptography>=42", "bleak>=0.22"]
+dev = ["pytest>=8", "cryptography>=42"]
+
+[project.scripts]
+xinliqiu = "aipin_sdk.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "." }
+packages = ["aipin_sdk", "aipin_sdk.protocol"]
+
+[tool.setuptools.package-data]
+aipin_sdk = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["../tests"]
