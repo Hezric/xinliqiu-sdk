@@ -47,6 +47,14 @@ CAPABILITIES = {
         "status": BOUNDED,
         "note": "Single capture, 1..127 seconds per request.",
     },
+    "device.init_owner_key": {
+        "status": BOUNDED,
+        "note": (
+            "Format the device and install an owner public key. Erases what the "
+            "device holds; needs signing material from the user's own copy of the "
+            "official app; slot-2 units cannot complete it at all."
+        ),
+    },
     "files.sync_range": {
         "status": SUPPORTED,
         "note": "Request a device-clock time range and receive CMPT containers.",

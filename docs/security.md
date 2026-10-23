@@ -14,6 +14,31 @@ The SDK never generates credentials, never writes them anywhere, and never
 sends them to a storage backend. The Cloudflare Worker has no endpoint that
 would accept them.
 
+## Two keys, two different jobs
+
+They are unrelated, and conflating them leads to wrong conclusions about what a
+credential can do.
+
+| | Count | What it governs |
+|---|---|---|
+| **KSC pairing key** | up to 2 slots | who may **connect** to the device (transport authentication, a 16-byte secret) |
+| **Owner RSA public key** | exactly 1 | what **encrypts recordings**; installed once by `init` |
+
+A credential in either pairing slot cannot decrypt a single recording. There is
+one recording key, and it lives in its own record, not in a pairing slot.
+
+## Business-channel counters
+
+The device derives the AES-GCM key, nonce and AAD from the pairing key, the two
+handshake challenges, and a per-direction counter. There is no direction input
+in that derivation, so a host frame and a device frame carrying the same counter
+would encrypt different plaintexts under one nonce — the single failure AES-GCM
+does not survive.
+
+The host therefore starts its counter at 2^63 while the device's own counters
+stay low, so the two ranges can never meet. The device accepts any strictly
+increasing counter, which is what makes this possible.
+
 ## Ciphertext-only storage
 
 Every storage backend in `aipin_sdk.storage` stores the original `enpt`

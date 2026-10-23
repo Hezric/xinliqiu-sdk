@@ -23,10 +23,24 @@ percentage and an error byte.
 device-clock range. The device exposes totals only: there is no file list and
 no cursor.
 
-**`files.sync_range`** — request a range and receive CMPT containers.
+**`files.sync_range`** — request a range and receive CMPT containers. The
+device is a delivery queue rather than an archive: each container is offered
+once, so a second request for the same window is legitimately empty. Point the
+output directory at durable storage.
 
 **`crypto.owner_key_decrypt`** — RSA unwrap plus AES-256-GCM verification with
 a private key you supply.
+
+**`device.init_owner_key`** — format the device and install an owner public
+key. It is the step that decides who can ever read the recordings, so it is
+worth understanding before running it:
+
+- it erases everything the device currently holds;
+- it needs signing material you supply, taken from your own copy of the
+  official app — the SDK never carries it;
+- re-running it rebinds whatever key you pass, but each run erases the device;
+- a slot-2 unit cannot complete it at all: those units only accept a token
+  signed by the vendor's fixed key.
 
 ## Bounded
 

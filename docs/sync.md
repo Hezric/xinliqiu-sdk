@@ -39,6 +39,38 @@ the file offers seen, and `rejected` holds `(transId, reason)` pairs the
 receiver refused. A range that wrote no files, or that rejected an offer, is
 not a success. Files land in a run directory as CMPT containers.
 
+### The device delivers a queue, not a re-readable archive
+
+This is the one behaviour that surprises people, so it is worth stating plainly:
+a range request answers with the containers the device has **not handed over
+yet**. The same container is offered once. Asking again for the same window
+returns `count: 0` even though `inventory_totals()` still counts those items.
+
+Observed on hardware: the first sync after pairing delivered everything pending;
+every later sync of the same window answered the request and then stayed silent.
+
+What follows from it:
+
+- **Point `output_dir` at durable storage.** There is no second chance for a
+  container you lose.
+- **`count: 0` is an answer, not a failure.** Do not loop.
+- A silent link and an empty queue look similar; the difference is whether the
+  device acknowledged the range request at all. The SDK raises when it did not.
+
+### What the receiver refuses
+
+| Condition | Result |
+|---|---|
+| Offer arrives on the control channel | rejected, `reason=1` |
+| Declared size above 64 MiB | rejected, `reason=9` (policy) |
+| More than 4 transfers in flight | rejected, `reason=9` |
+| `md5` present but not 32 hex characters | rejected, `reason=2` |
+| Chunk would exceed the declared size | the transfer is abandoned |
+| MD5 mismatch at the end | file removed, `reason=10` reported |
+
+Nothing partial is ever published: bytes go to `<name>.part`, are fsync'd,
+verified, and only then renamed into place. A failure leaves no file behind.
+
 ---
 
 ## 2. Host to store
